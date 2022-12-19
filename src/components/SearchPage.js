@@ -8,6 +8,8 @@ import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import RoomIcon from '@material-ui/icons/Room';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import styled from 'styled-components';
+import { useStateValue } from '../SearchProvider';
+import useGoogle from '../useGoogle';
 
 const SearchPageHeader = styled.div`
     display: flex;
@@ -91,6 +93,10 @@ const SearchPageResultDesc = styled.p`
 `
 
 const SearchPage = () => {
+    const [ {term} ] = useStateValue();
+    const { data } = useGoogle(term);
+    console.log(data);
+
     return (
         <div>
             <SearchPageHeader>
@@ -131,23 +137,29 @@ const SearchPage = () => {
                     </SearchPageOptions>
                 </div>
             </SearchPageHeader>
+            {term && (
             <SearchPageResults>
                 <p className='resultCount'>
-                    About 21,800,000 results (1.32 seconds) for TWD
+                    About {data?.searchInformation.formattedTotalResults} results ({data?.searchInformation.formattedSearchTime}) for {term}
                 </p>
+                {data?.items.map(item => (
                 <div className='result'>
-                    <SearchPageLink href="">
-                        <img src='https://thewebdev.tech/static/ce59ef6831a6ff9cba3b957baece8d8c/a3e81/logo.webp' alt="" />
-                        thewebdev.tech
+                    <SearchPageLink href={item.link}>
+                        {item.pagemap?.cse_image?.length > 0 && item.pagemap?.cse_image[0]?.src && (
+                           <img src={item.pagemap?.cse_image[0]?.src} alt="" /> 
+                        )}
+                        {item.displayLink}
                     </SearchPageLink>
-                    <SearchPageResultTitle href="">
-                        <h2>The Web Dev</h2>
+                    <SearchPageResultTitle href={item.link}>
+                        <h2>{item.title}</h2>
                     </SearchPageResultTitle>
                     <SearchPageResultDesc>
-                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Impedit, suscipit!
+                        {item.snippet}
                     </SearchPageResultDesc>
                 </div>
+                ))}
             </SearchPageResults>
+            )}
         </div>
     )
 }
