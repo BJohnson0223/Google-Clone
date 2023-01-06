@@ -4,9 +4,10 @@ import {Button} from '@material-ui/core';
 import styled from 'styled-components';
 //import {Search} from '@material-ui/icons';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useStateValue } from '../SearchProvider.js';
 import { SET_SEARCH_TERM } from '../types.js';
+import React from 'react';
 
 const SearchInput = styled.div`
     display: flex;
@@ -49,8 +50,8 @@ const SearchButton = styled.div`
 
 const Search = ({ hide }) => {
     const [input, setInput] = useState("");
-    const history = useHistory();
-    const[{}, dispatch] = useStateValue(); 
+    const navigate = Navigate();
+    const[dispatch] = useStateValue(); 
 
     const search = e => {
         e.preventDefault();
@@ -58,7 +59,8 @@ const Search = ({ hide }) => {
             type: SET_SEARCH_TERM,
             term: input
         })
-        history.push("/search");
+        console.log(input);
+        navigate.push("/search");
     };
 
     return (
